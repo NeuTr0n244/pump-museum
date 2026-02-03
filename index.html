@@ -379,6 +379,37 @@
             margin-top: 1rem;
         }
 
+        .ca-address {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: var(--green);
+            cursor: pointer;
+            padding: 10px 20px;
+            border: 1px solid rgba(61, 220, 151, 0.3);
+            border-radius: 8px;
+            background: rgba(61, 220, 151, 0.05);
+            transition: all 0.3s ease;
+            user-select: all;
+            word-break: break-all;
+            max-width: 500px;
+            margin: 20px auto 5px;
+            text-align: center;
+            display: block;
+        }
+
+        .ca-address:hover {
+            background: rgba(61, 220, 151, 0.1);
+            box-shadow: 0 0 15px rgba(61, 220, 151, 0.2);
+        }
+
+        .ca-hint {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+            text-align: center;
+            margin-top: 5px;
+        }
+
         /* ==================== REVEAL ANIMATION ==================== */
         .reveal {
             opacity: 0;
@@ -647,6 +678,8 @@
                     <div class="loading-bar-fill" id="loadingFill"></div>
                 </div>
                 <p class="enter-hint">Best experienced on desktop • Use WASD to move</p>
+                <div class="ca-address" id="caAddress">CA: EDPUEB7HHVsjnV9pH3rSSphQeYndYK1Yy2NSJWY6pump 📋</div>
+                <p class="ca-hint">Click to copy</p>
             </div>
             <div class="scroll-indicator">
                 <span>SCROLL</span>
@@ -967,6 +1000,14 @@
                 // Mute button
                 document.getElementById('muteBtn').addEventListener('click', () => {
                     this.toggleMute();
+                });
+
+                // CA address copy
+                document.getElementById('caAddress').addEventListener('click', function() {
+                    navigator.clipboard.writeText('EDPUEB7HHVsjnV9pH3rSSphQeYndYK1Yy2NSJWY6pump');
+                    const original = this.textContent;
+                    this.textContent = '✅ Copied!';
+                    setTimeout(() => { this.textContent = original; }, 2000);
                 });
 
                 // Window resize
