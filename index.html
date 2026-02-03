@@ -490,6 +490,32 @@
             transform: translate(-50%, -50%);
         }
 
+        /* Mute Button */
+        #muteBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(61, 220, 151, 0.3);
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: all;
+            transition: all 0.3s ease;
+            z-index: 9001;
+        }
+
+        #muteBtn:hover {
+            background: rgba(61, 220, 151, 0.2);
+            border-color: var(--green);
+            transform: scale(1.1);
+        }
+
         /* Pause Screen */
         .screen {
             position: fixed;
@@ -696,6 +722,7 @@
             <div class="crosshair-dot"></div>
             <div class="crosshair-ring"></div>
         </div>
+        <button id="muteBtn" title="Toggle Music">🔊</button>
         <!-- Hidden stats to prevent JS errors -->
         <div class="hidden-stats">
             <span id="exposureValue">0.80</span>
@@ -824,6 +851,12 @@
                 this.colliders = [];
                 this.mixer = null;
 
+                // Background music
+                this.bgMusic = new Audio('https://pub-8d7b1a002dc7461881f41950b1c60105.r2.dev/museum-ambient.mp3');
+                this.bgMusic.loop = true;
+                this.bgMusic.volume = 0;
+                this.isMuted = false;
+
                 // Raycaster for ground detection
                 this.downRay = new THREE.Raycaster();
 
@@ -929,6 +962,11 @@
 
                 document.getElementById('backHomeBtn').addEventListener('click', () => {
                     this.backToHome();
+                });
+
+                // Mute button
+                document.getElementById('muteBtn').addEventListener('click', () => {
+                    this.toggleMute();
                 });
 
                 // Window resize
@@ -1106,6 +1144,11 @@
                     // Request pointer lock automatically
                     this.canvas.requestPointerLock();
 
+                    // Start background music with fade-in
+                    this.bgMusic.volume = 0;
+                    this.bgMusic.play().catch(e => console.log('Music autoplay prevented:', e));
+                    this.fadeInMusic();
+
                     // Start game loop if not already running
                     if (!this.isLooping) {
                         this.isLooping = true;
@@ -1115,15 +1158,44 @@
                 }, 600);
             }
 
+            fadeInMusic() {
+                const fadeIn = setInterval(() => {
+                    if (this.bgMusic.volume < 0.15) {
+                        this.bgMusic.volume = Math.min(this.bgMusic.volume + 0.01, 0.15);
+                    } else {
+                        clearInterval(fadeIn);
+                    }
+                }, 100);
+            }
+
+            fadeOutMusic() {
+                const fadeOut = setInterval(() => {
+                    if (this.bgMusic.volume > 0.01) {
+                        this.bgMusic.volume = Math.max(this.bgMusic.volume - 0.01, 0);
+                    } else {
+                        this.bgMusic.pause();
+                        clearInterval(fadeOut);
+                    }
+                }, 100);
+            }
+
             pause() {
                 this.isPaused = true;
                 this.pauseScreen.classList.add('active');
+                // Reduce music volume when paused
+                if (!this.isMuted) {
+                    this.bgMusic.volume = 0.05;
+                }
             }
 
             resume() {
                 this.isPaused = false;
                 this.pauseScreen.classList.remove('active');
                 this.canvas.requestPointerLock();
+                // Restore music volume when resuming
+                if (!this.isMuted) {
+                    this.bgMusic.volume = 0.15;
+                }
             }
 
             backToHome() {
@@ -1131,6 +1203,9 @@
                 if (document.pointerLockElement) {
                     document.exitPointerLock();
                 }
+
+                // Fade out and stop music
+                this.fadeOutMusic();
 
                 // Stop render loop
                 this.isLooping = false;
@@ -1164,6 +1239,18 @@
                     document.documentElement.requestFullscreen();
                 } else {
                     document.exitFullscreen();
+                }
+            }
+
+            toggleMute() {
+                this.isMuted = !this.isMuted;
+                const muteBtn = document.getElementById('muteBtn');
+                if (this.isMuted) {
+                    this.bgMusic.volume = 0;
+                    muteBtn.textContent = '🔇';
+                } else {
+                    this.bgMusic.volume = this.isPaused ? 0.05 : 0.15;
+                    muteBtn.textContent = '🔊';
                 }
             }
 
