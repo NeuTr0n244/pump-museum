@@ -314,31 +314,7 @@
             margin-top: 0.5rem;
         }
 
-        /* ==================== SECTION 3 - ENTER ==================== */
-        #enter {
-            background: radial-gradient(circle at center, rgba(13, 59, 46, 0.3) 0%, transparent 70%);
-            position: relative;
-        }
-
-        .enter-content {
-            text-align: center;
-            z-index: 1;
-        }
-
-        .enter-logo {
-            width: 120px;
-            height: auto;
-            margin-bottom: 2rem;
-            opacity: 0.8;
-        }
-
-        .enter-title {
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 700;
-            margin-bottom: 3rem;
-            color: var(--text);
-        }
-
+        /* ==================== ENTER BUTTON (IN HERO) ==================== */
         .enter-btn {
             padding: 1.5rem 4rem;
             font-size: 1.5rem;
@@ -354,7 +330,8 @@
             letter-spacing: 0.05em;
             box-shadow: 0 0 20px var(--green-glow);
             position: relative;
-            margin-bottom: 2rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
         }
 
         .enter-btn:hover:not(:disabled) {
@@ -627,7 +604,6 @@
         </div>
         <div class="navbar-links">
             <a href="#about">About</a>
-            <a href="#enter">Enter</a>
         </div>
     </nav>
 
@@ -640,6 +616,11 @@
                 <img src="Pump-Fun-Logo.png" alt="Pump Museum Logo" class="hero-logo">
                 <h1 class="hero-title">PUMP MUSEUM</h1>
                 <p class="hero-subtitle">The History of Internet Culture</p>
+                <button id="enterBtn" class="enter-btn" disabled>LOADING...</button>
+                <div class="loading-bar-mini">
+                    <div class="loading-bar-fill" id="loadingFill"></div>
+                </div>
+                <p class="enter-hint">Best experienced on desktop • Use WASD to move</p>
             </div>
             <div class="scroll-indicator">
                 <span>SCROLL</span>
@@ -687,19 +668,6 @@
                         <div class="stat-label">To Explore</div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- SECTION 3 - ENTER -->
-        <section id="enter">
-            <div class="enter-content reveal">
-                <img src="Pump-Fun-Logo.png" alt="Pump Museum" class="enter-logo">
-                <h2 class="enter-title">Ready to explore?</h2>
-                <button id="enterBtn" class="enter-btn" disabled>LOADING...</button>
-                <div class="loading-bar-mini">
-                    <div class="loading-bar-fill" id="loadingFill"></div>
-                </div>
-                <p class="enter-hint">Best experienced on desktop • Use WASD to move</p>
             </div>
         </section>
     </div>
