@@ -243,6 +243,41 @@
             margin-bottom: 1.5rem;
         }
 
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.75rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--green);
+            background: transparent;
+            border: 1px solid var(--green);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .social-btn:hover {
+            background: var(--green);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(61, 220, 151, 0.3);
+        }
+
+        .social-icon {
+            font-size: 1.2rem;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -626,6 +661,17 @@
                     this museum celebrates the art, humor, and creativity that connects
                     millions of people worldwide.
                 </p>
+
+                <div class="social-buttons">
+                    <a href="https://x.com/pumpmuseum" target="_blank" rel="noopener noreferrer" class="social-btn">
+                        <span class="social-icon">𝕏</span>
+                        <span>Follow us on X</span>
+                    </a>
+                    <a href="https://t.me/pumpmuseum" target="_blank" rel="noopener noreferrer" class="social-btn">
+                        <span class="social-icon">💬</span>
+                        <span>Join Community</span>
+                    </a>
+                </div>
 
                 <div class="stats-grid reveal">
                     <div class="stat-card">
