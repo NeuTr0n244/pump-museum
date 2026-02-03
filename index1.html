@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEME MUSEUM - Explorador 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #07070a;
+            --accent: #c8ff2e;
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Syne', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Loading Screen */
+        #loadingScreen {
+            background: var(--bg-dark);
+        }
+
+        .title {
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            margin-bottom: 3rem;
+            font-weight: 400;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            width: min(500px, 80vw);
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 20px rgba(200, 255, 46, 0.5);
+        }
+
+        .progress-percent {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+
+        .loading-status {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* Instructions Screen */
+        #instructionsScreen {
+            background: rgba(7, 7, 10, 0.95);
+            backdrop-filter: blur(20px);
+        }
+
+        .instructions-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
+        }
+
+        .instructions-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1rem 2rem;
+            margin-bottom: 2rem;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .control-key {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        .control-desc {
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+        }
+
+        .enter-btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Syne', sans-serif;
+            background: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .enter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(200, 255, 46, 0.3);
+        }
+
+        /* Game Canvas */
+        #gameCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        #gameCanvas.active {
+            display: block;
+        }
+
+        /* HUD */
+        .hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .hud.active {
+            opacity: 1;
+        }
+
+        .crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .crosshair-dot {
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .crosshair-ring {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            text-align: right;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-line {
+            margin: 0.3rem 0;
+            color: var(--text-dim);
+        }
+
+        .stat-value {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .controls-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        .color-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            pointer-events: all;
+        }
+
+        .control-group {
+            margin-bottom: 1rem;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-label {
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .control-value {
+            color: var(--accent);
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .mode-btn {
+            padding: 0.3rem 0.6rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .mode-btn.active {
+            background: var(--accent);
+            color: var(--bg-dark);
+            border-color: var(--accent);
+        }
+
+        .exposure-slider {
+            width: 180px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            border-radius: 2px;
+        }
+
+        .exposure-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .exposure-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }
+
+        /* Pause Screen */
+        #pauseScreen {
+            background: rgba(7, 7, 10, 0.8);
+            backdrop-filter: blur(20px);
+            cursor: pointer;
+        }
+
+        .pause-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .pause-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .pause-hint {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            font-family: 'Space Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="screen active">
+        <h1 class="title">MEME MUSEUM</h1>
+        <p class="subtitle">Carregando seu museu...</p>
+        <div class="spinner"></div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-percent" id="progressPercent">0%</div>
+        <div class="loading-status" id="loadingStatus">Iniciando...</div>
+    </div>
+
+    <!-- Instructions Screen -->
+    <div id="instructionsScreen" class="screen">
+        <div class="instructions-card">
+            <h2 class="instructions-title">Controles</h2>
+            <div class="controls-grid">
+                <span class="control-key">WASD</span>
+                <span class="control-desc">Mover</span>
+
+                <span class="control-key">MOUSE</span>
+                <span class="control-desc">Olhar ao redor</span>
+
+                <span class="control-key">SHIFT</span>
+                <span class="control-desc">Correr (2x velocidade)</span>
+
+                <span class="control-key">SPACE</span>
+                <span class="control-desc">Pular</span>
+
+                <span class="control-key">ESC</span>
+                <span class="control-desc">Pausar</span>
+
+                <span class="control-key">F</span>
+                <span class="control-desc">Tela cheia</span>
+            </div>
+            <button class="enter-btn" id="enterBtn">ENTRAR NO MUSEU</button>
+        </div>
+    </div>
+
+    <!-- Pause Screen -->
+    <div id="pauseScreen" class="screen">
+        <div class="pause-card">
+            <h2 class="pause-title">PAUSADO</h2>
+            <p class="pause-hint">Clique para continuar</p>
+        </div>
+    </div>
+
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- HUD -->
+    <div class="hud" id="hud">
+        <div class="crosshair">
+            <div class="crosshair-dot"></div>
+            <div class="crosshair-ring"></div>
+        </div>
+        <div class="color-controls">
+            <div class="control-group">
+                <label class="control-label">Modo de Cor</label>
+                <div class="mode-selector">
+                    <button class="mode-btn" data-mode="linear">Neutral</button>
+                    <button class="mode-btn active" data-mode="aces">ACES</button>
+                    <button class="mode-btn" data-mode="reinhard">Reinhard</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">
+                    Brilho: <span class="control-value" id="exposureValue">1.00</span>
+                </label>
+                <input
+                    type="range"
+                    class="exposure-slider"
+                    id="exposureSlider"
+                    min="0.005"
+                    max="3.0"
+                    step="0.005"
+                    value="1.0"
+                >
+            </div>
+        </div>
+        <div class="stats" id="stats">
+            <div class="stat-line">FPS: <span class="stat-value" id="fps">0</span></div>
+            <div class="stat-line">Meshes: <span class="stat-value" id="meshCount">0</span></div>
+            <div class="stat-line">Tris: <span class="stat-value" id="triCount">0</span></div>
+        </div>
+        <div class="controls-hint">
+            WASD: mover • Mouse: olhar • Shift: correr<br>
+            Space: pular • ESC: pausar • F: fullscreen
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+        class MuseumEngine {
+            constructor() {
+                // DOM elements
+                this.loadingScreen = document.getElementById('loadingScreen');
+                this.instructionsScreen = document.getElementById('instructionsScreen');
+                this.pauseScreen = document.getElementById('pauseScreen');
+                this.canvas = document.getElementById('gameCanvas');
+                this.hud = document.getElementById('hud');
+
+                // Three.js core
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.clock = new THREE.Clock();
+
+                // Player state
+                this.player = {
+                    position: new THREE.Vector3(0, 1.4, 0),
+                    velocity: new THREE.Vector3(),
+                    yaw: 0,
+                    pitch: 0,
+                    speed: 6,
+                    sprintSpeed: 12,
+                    jumpSpeed: 7,
+                    gravity: 22,
+                    radius: 0.35,
+                    height: 1.4,
+                    onGround: false
+                };
+
+                // Input state
+                this.keys = {};
+                this.mouseMovement = { x: 0, y: 0 };
+                this.mouseSensitivity = 0.002;
+
+                // Game state
+                this.isPointerLocked = false;
+                this.isPaused = false;
+                this.colliders = [];
+                this.mixer = null;
+
+                // Raycaster for ground detection only
+                this.downRay = new THREE.Raycaster();
+
+                // Stats
+                this.frameCount = 0;
+                this.lastFpsUpdate = 0;
+                this.meshCount = 0;
+                this.triCount = 0;
+
+                // Head bobbing
+                this.headBobTime = 0;
+
+                this.init();
+            }
+
+            init() {
+                this.setupScene();
+                this.setupEventListeners();
+                // Start loading immediately (DO NOT add lights before loading model)
+                this.loadModel();
+            }
+
+            setupScene() {
+                // Scene
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0x111111);
+
+                // Camera
+                this.camera = new THREE.PerspectiveCamera(
+                    75,
+                    window.innerWidth / window.innerHeight,
+                    0.1,
+                    1000
+                );
+
+                // Renderer
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    antialias: false,  // Disabled for performance with heavy models
+                    powerPreference: 'high-performance'
+                });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(1);  // Limit to 1 for better performance
+                this.renderer.shadowMap.enabled = false;  // Disabled - too expensive for 8.9M tris
+
+                // CORRECT: sRGB output for proper gamma (GLB textures are sRGB)
+                this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+                // CORRECT: ACES tone mapping compresses HDR lights to visible range
+                this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                this.renderer.toneMappingExposure = 1.0;
+            }
+
+            setupEventListeners() {
+                // Enter museum button
+                document.getElementById('enterBtn').addEventListener('click', () => {
+                    this.startGame();
+                });
+
+                // Color mode selector
+                const modeButtons = document.querySelectorAll('.mode-btn');
+                modeButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        // Update active state
+                        modeButtons.forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+
+                        // Apply color mode
+                        const mode = e.target.dataset.mode;
+                        this.setColorMode(mode);
+                    });
+                });
+
+                // Exposure slider
+                const slider = document.getElementById('exposureSlider');
+                slider.addEventListener('input', (e) => {
+                    const value = parseFloat(e.target.value);
+                    this.renderer.toneMappingExposure = value;
+                    document.getElementById('exposureValue').textContent = value.toFixed(2);
+                });
+
+                // Pointer lock
+                document.addEventListener('pointerlockchange', () => {
+                    this.isPointerLocked = document.pointerLockElement === this.canvas;
+                    this.hud.classList.toggle('active', this.isPointerLocked);
+                    if (!this.isPointerLocked && !this.isPaused) {
+                        this.pause();
+                    }
+                });
+
+                // Mouse movement
+                document.addEventListener('mousemove', (e) => {
+                    if (this.isPointerLocked) {
+                        this.mouseMovement.x = e.movementX;
+                        this.mouseMovement.y = e.movementY;
+                    }
+                });
+
+                // Keyboard
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.code] = true;
+
+                    if (e.code === 'Escape') {
+                        if (this.isPointerLocked) {
+                            document.exitPointerLock();
+                        }
+                    }
+
+                    if (e.code === 'KeyF') {
+                        this.toggleFullscreen();
+                    }
+                });
+
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.code] = false;
+                });
+
+                // Pause screen click
+                this.pauseScreen.addEventListener('click', () => {
+                    if (this.isPaused) {
+                        this.resume();
+                    }
+                });
+
+                // Window resize
+                window.addEventListener('resize', () => {
+                    this.camera.aspect = window.innerWidth / window.innerHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            }
+
+            loadModel() {
+                this.updateLoadingProgress(0, 'Carregando modelo...');
+
+                // Setup loaders
+                const dracoLoader = new DRACOLoader();
+                dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+
+                const gltfLoader = new GLTFLoader();
+                gltfLoader.setDRACOLoader(dracoLoader);
+
+                // Load GLB file
+                gltfLoader.load(
+                    './museu memes1.glb',
+                    (gltf) => {
+                        this.onModelLoaded(gltf);
+                    },
+                    (progress) => {
+                        if (progress.lengthComputable) {
+                            const percent = Math.round((progress.loaded / progress.total) * 100);
+                            this.updateLoadingProgress(percent, 'Carregando modelo...');
+                        }
+                    },
+                    (error) => {
+                        console.error('Erro ao carregar modelo:', error);
+                        document.getElementById('loadingStatus').textContent =
+                            'Erro: Arquivo "museu memes1.glb" não encontrado. Certifique-se de que está na mesma pasta do index.html';
+                    }
+                );
+            }
+
+            updateLoadingProgress(percent, status) {
+                document.getElementById('progressFill').style.width = `${percent}%`;
+                document.getElementById('progressPercent').textContent = `${percent}%`;
+                document.getElementById('loadingStatus').textContent = status;
+            }
+
+            setupLighting(hasModelLights) {
+                if (hasModelLights) {
+                    // Model has its own lights - DO NOT add anything
+                    return;
+                }
+
+                // Model has no lights - add ONLY a weak ambient light
+                const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+                this.scene.add(ambient);
+            }
+
+            onModelLoaded(gltf) {
+                this.updateLoadingProgress(100, 'Processando...');
+
+                const model = gltf.scene;
+
+                // Check if model has lights
+                let hasModelLights = false;
+                let lightCount = 0;
+                model.traverse((child) => {
+                    if (child.isLight) {
+                        hasModelLights = true;
+                        lightCount++;
+                        // Blender exports lights in physical units (Watts/candelas)
+                        // Divide by 100 for balanced look
+                        child.intensity = child.intensity / 100;
+                    }
+                });
+                console.log(`Luzes encontradas: ${lightCount}`);
+
+                // Setup lighting based on model
+                this.setupLighting(hasModelLights);
+
+                // Calculate bounding box
+                const box = new THREE.Box3().setFromObject(model);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+
+                // Center model on X and Z, bottom on Y=0
+                model.position.x = -center.x;
+                model.position.z = -center.z;
+                model.position.y = -box.min.y;
+
+                // Count meshes and triangles (for stats only - NOT for colliders)
+                this.meshCount = 0;
+                this.triCount = 0;
+
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        // DO NOT enable shadows - too expensive for 8.9M tris
+                        // DO NOT add to colliders - would kill performance
+                        this.meshCount++;
+
+                        if (child.geometry) {
+                            const positions = child.geometry.attributes.position;
+                            if (positions) {
+                                this.triCount += positions.count / 3;
+                            }
+                        }
+                    }
+                });
+
+                this.triCount = Math.round(this.triCount);
+
+                // Collect meshes for collision
+                this.colliders = [];
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        this.colliders.push(child);
+                    }
+                });
+
+                // Wall collision raycaster
+                this.wallRay = new THREE.Raycaster();
+
+                // Setup animations
+                if (gltf.animations && gltf.animations.length > 0) {
+                    this.mixer = new THREE.AnimationMixer(model);
+                    gltf.animations.forEach((clip) => {
+                        this.mixer.clipAction(clip).play();
+                    });
+                }
+
+                // Add model to scene
+                this.scene.add(model);
+
+                // Position player at center of model
+                this.player.position.set(0, this.player.height, 0);
+
+                this.updateLoadingProgress(100, 'Pronto!');
+
+                // Transition to instructions
+                setTimeout(() => {
+                    this.loadingScreen.classList.remove('active');
+                    this.instructionsScreen.classList.add('active');
+                }, 500);
+            }
+
+            startGame() {
+                this.instructionsScreen.classList.remove('active');
+                this.canvas.classList.add('active');
+                this.canvas.requestPointerLock();
+                this.loop();
+            }
+
+            pause() {
+                this.isPaused = true;
+                this.pauseScreen.classList.add('active');
+            }
+
+            resume() {
+                this.isPaused = false;
+                this.pauseScreen.classList.remove('active');
+                this.canvas.requestPointerLock();
+            }
+
+            toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            setColorMode(mode) {
+                switch (mode) {
+                    case 'linear':
+                        // Neutral tone mapping with sRGB output
+                        this.renderer.toneMapping = THREE.NeutralToneMapping;
+                        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+                        break;
+
+                    case 'aces':
+                        // ACES Filmic - best for Blender GLB models
+                        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+                        break;
+
+                    case 'reinhard':
+                        // Reinhard - softer highlight compression
+                        this.renderer.toneMapping = THREE.ReinhardToneMapping;
+                        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+                        break;
+                }
+            }
+
+            updatePlayer(delta) {
+                if (this.isPaused || !this.isPointerLocked) return;
+
+                // Clamp delta to prevent physics explosion
+                delta = Math.min(delta, 0.1);
+
+                // Mouse look
+                this.player.yaw -= this.mouseMovement.x * this.mouseSensitivity;
+                this.player.pitch -= this.mouseMovement.y * this.mouseSensitivity;
+                this.player.pitch = THREE.MathUtils.clamp(
+                    this.player.pitch,
+                    -Math.PI / 2 + 0.1,
+                    Math.PI / 2 - 0.1
+                );
+                this.mouseMovement.x = 0;
+                this.mouseMovement.y = 0;
+
+                // Movement direction
+                const forward = new THREE.Vector3(
+                    Math.sin(this.player.yaw),
+                    0,
+                    Math.cos(this.player.yaw)
+                );
+                const right = new THREE.Vector3(
+                    Math.sin(this.player.yaw + Math.PI / 2),
+                    0,
+                    Math.cos(this.player.yaw + Math.PI / 2)
+                );
+
+                // Calculate desired velocity
+                const moveDir = new THREE.Vector3();
+                if (this.keys['KeyW']) moveDir.add(forward);
+                if (this.keys['KeyS']) moveDir.sub(forward);
+                if (this.keys['KeyD']) moveDir.add(right);
+                if (this.keys['KeyA']) moveDir.sub(right);
+
+                if (moveDir.length() > 0) {
+                    moveDir.normalize();
+                    const speed = this.keys['ShiftLeft'] || this.keys['ShiftRight']
+                        ? this.player.sprintSpeed
+                        : this.player.speed;
+
+                    const moveX = moveDir.x * speed * delta;
+                    const moveZ = moveDir.z * speed * delta;
+
+                    // Wall collision - check X direction
+                    const collisionDist = 1.0;
+                    const rayOrigin = this.player.position.clone();
+
+                    let canMoveX = true;
+                    let canMoveZ = true;
+
+                    if (Math.abs(moveX) > 0.001) {
+                        const dirX = new THREE.Vector3(Math.sign(moveX), 0, 0);
+                        this.wallRay.set(rayOrigin, dirX);
+                        this.wallRay.far = collisionDist;
+                        const hitsX = this.wallRay.intersectObjects(this.colliders, true);
+                        if (hitsX.length > 0 && hitsX[0].distance < collisionDist) {
+                            canMoveX = false;
+                        }
+                    }
+
+                    // Wall collision - check Z direction
+                    if (Math.abs(moveZ) > 0.001) {
+                        const dirZ = new THREE.Vector3(0, 0, Math.sign(moveZ));
+                        this.wallRay.set(rayOrigin, dirZ);
+                        this.wallRay.far = collisionDist;
+                        const hitsZ = this.wallRay.intersectObjects(this.colliders, true);
+                        if (hitsZ.length > 0 && hitsZ[0].distance < collisionDist) {
+                            canMoveZ = false;
+                        }
+                    }
+
+                    if (canMoveX) this.player.position.x += moveX;
+                    if (canMoveZ) this.player.position.z += moveZ;
+                }
+
+                // Gravity
+                this.player.velocity.y -= this.player.gravity * delta;
+                this.player.position.y += this.player.velocity.y * delta;
+
+                // Ground detection
+                this.downRay.set(
+                    this.player.position,
+                    new THREE.Vector3(0, -1, 0)
+                );
+                this.downRay.far = this.player.height + 2;
+                const groundIntersects = this.downRay.intersectObjects(this.colliders, true);
+
+                if (groundIntersects.length > 0) {
+                    const groundY = groundIntersects[0].point.y + this.player.height;
+                    if (this.player.position.y <= groundY + 0.2) {
+                        this.player.position.y = groundY;
+                        this.player.velocity.y = 0;
+                        this.player.onGround = true;
+                    }
+                }
+
+                // Fallback floor
+                if (this.player.position.y < this.player.height) {
+                    this.player.position.y = this.player.height;
+                    this.player.velocity.y = 0;
+                    this.player.onGround = true;
+                }
+
+                // Update camera (NO head bobbing)
+                this.camera.position.copy(this.player.position);
+
+                // Camera rotation
+                this.camera.rotation.order = 'YXZ';
+                this.camera.rotation.y = this.player.yaw;
+                this.camera.rotation.x = this.player.pitch;
+            }
+
+
+            updateStats() {
+                this.frameCount++;
+                const now = performance.now();
+                if (now - this.lastFpsUpdate >= 1000) {
+                    document.getElementById('fps').textContent = this.frameCount;
+                    this.frameCount = 0;
+                    this.lastFpsUpdate = now;
+                }
+                document.getElementById('meshCount').textContent = this.meshCount;
+                document.getElementById('triCount').textContent = this.triCount.toLocaleString('pt-BR');
+            }
+
+            loop() {
+                requestAnimationFrame(() => this.loop());
+
+                const delta = this.clock.getDelta();
+
+                if (!this.isPaused) {
+                    this.updatePlayer(delta);
+                    if (this.mixer) {
+                        this.mixer.update(delta);
+                    }
+                }
+
+                this.renderer.render(this.scene, this.camera);
+                this.updateStats();
+            }
+        }
+
+        // Initialize engine when DOM is ready
+        const engine = new MuseumEngine();
+    </script>
+</body>
+</html>
