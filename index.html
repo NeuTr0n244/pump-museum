@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PUMP MUSEUM - The History of Internet Culture</title>
+    <title>HALL OF MEMES - The History of Internet Culture</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -460,7 +460,7 @@
             100% { opacity: 0; }
         }
 
-        /* ==================== MUSEUM 3D ==================== */
+        /* ==================== HALL OF MEMES 3D ==================== */
         #gameCanvas {
             position: fixed;
             top: 0;
@@ -656,8 +656,8 @@
     <!-- Navbar -->
     <nav class="navbar" id="navbar">
         <div class="navbar-logo">
-            <img src="Pump-Fun-Logo.png" alt="Pump Museum">
-            <span class="navbar-title">PUMP MUSEUM</span>
+            <img src="Pump-Fun-Logo.png" alt="Hall of Memes">
+            <span class="navbar-title">HALL OF MEMES</span>
         </div>
         <div class="navbar-links">
             <a href="#about">About</a>
@@ -670,8 +670,8 @@
         <section id="hero">
             <div class="particles-bg" id="particlesBg"></div>
             <div class="hero-content">
-                <img src="Pump-Fun-Logo.png" alt="Pump Museum Logo" class="hero-logo">
-                <h1 class="hero-title">PUMP MUSEUM</h1>
+                <img src="Pump-Fun-Logo.png" alt="Hall of Memes Logo" class="hero-logo">
+                <h1 class="hero-title">HALL OF MEMES</h1>
                 <p class="hero-subtitle">The History of Internet Culture</p>
                 <button id="enterBtn" class="enter-btn" disabled>LOADING...</button>
                 <div class="loading-bar-mini">
@@ -690,15 +690,15 @@
         <!-- SECTION 2 - ABOUT -->
         <section id="about">
             <div class="about-content reveal">
-                <h2 class="section-title">What is Pump Museum?</h2>
+                <h2 class="section-title">What is Hall of Memes?</h2>
                 <p class="about-text">
-                    Step into the world's first 3D museum dedicated to internet meme culture.
+                    Step into the world's first 3D Hall of Memes dedicated to internet meme culture.
                     Walk through our halls and discover the origins of the most iconic memes
                     that shaped online culture — from Doge to Pepe, from Trollface to Wojak.
                 </p>
                 <p class="about-text">
                     Built on the spirit of pump.fun and the crypto meme community,
-                    this museum celebrates the art, humor, and creativity that connects
+                    Hall of Memes celebrates the art, humor, and creativity that connects
                     millions of people worldwide.
                 </p>
 
@@ -734,7 +734,7 @@
     <!-- Green flash overlay -->
     <div id="greenFlash"></div>
 
-    <!-- Museum 3D -->
+    <!-- Hall of Memes 3D -->
     <canvas id="gameCanvas"></canvas>
 
     <!-- Pause Screen -->
@@ -837,7 +837,7 @@
 
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // ==================== MUSEUM ENGINE ====================
+        // ==================== HALL OF MEMES ENGINE ====================
 
         class MuseumEngine {
             constructor() {
@@ -1148,10 +1148,10 @@
                 this.modelLoaded = true;
                 this.loadingFill.style.width = '100%';
                 this.enterBtn.disabled = false;
-                this.enterBtn.textContent = 'ENTER MUSEUM';
+                this.enterBtn.textContent = 'ENTER HALL OF MEMES';
                 this.enterBtn.classList.add('loaded');
 
-                console.log('Ready! Click ENTER MUSEUM.');
+                console.log('Ready! Click ENTER HALL OF MEMES.');
             }
 
             startTransition() {
@@ -1161,7 +1161,7 @@
                 // Green flash
                 this.greenFlash.classList.add('active');
 
-                // After flash, show museum
+                // After flash, show hall of memes
                 setTimeout(() => {
                     // Hide landing page
                     this.landingPage.classList.add('hidden');
