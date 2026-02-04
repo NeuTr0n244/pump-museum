@@ -6,7 +6,7 @@
     <title>HALL OF MEMES - The History of Internet Culture</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -31,7 +31,7 @@
         }
 
         body {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Space Mono', monospace;
             background: var(--bg-dark);
             color: var(--text);
             overflow-x: hidden;
@@ -151,9 +151,10 @@
         }
 
         .hero-title {
-            font-size: clamp(3rem, 10vw, 8rem);
-            font-weight: 800;
-            letter-spacing: -0.02em;
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 600;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.05em;
             margin-bottom: 1rem;
             background: linear-gradient(135deg, #F0D060, #D4AF37, #8B7024, #D4AF37, #F0D060);
             -webkit-background-clip: text;
@@ -172,36 +173,10 @@
             font-size: clamp(1rem, 2vw, 1.5rem);
             color: var(--text-dim);
             font-family: 'Space Mono', monospace;
+            font-style: italic;
             margin-bottom: 3rem;
         }
 
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-dim);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.8rem;
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translate(-50%, 0); }
-            50% { transform: translate(-50%, 10px); }
-        }
-
-        .chevron {
-            width: 20px;
-            height: 20px;
-            border-right: 2px solid var(--gold);
-            border-bottom: 2px solid var(--gold);
-            transform: rotate(45deg);
-        }
 
         /* ==================== SECTION 2 - ABOUT ==================== */
         #about {
@@ -210,21 +185,22 @@
 
         .section-title {
             font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 700;
-            margin-bottom: 2rem;
-            color: var(--text);
-            text-align: center;
+            font-weight: 600;
+            font-family: 'Cinzel', serif;
+            margin-bottom: 2.5rem;
+            color: var(--gold);
+            text-align: left;
         }
 
         .about-content {
-            max-width: 800px;
-            text-align: center;
+            max-width: 900px;
+            text-align: left;
         }
 
         .about-text {
             font-family: 'Space Mono', monospace;
-            font-size: 1.1rem;
-            line-height: 1.8;
+            font-size: 1.05rem;
+            line-height: 1.9;
             color: var(--text-dim);
             margin-bottom: 1.5rem;
         }
@@ -232,7 +208,7 @@
         .social-buttons {
             display: flex;
             gap: 1rem;
-            justify-content: center;
+            justify-content: flex-start;
             margin-top: 2.5rem;
             margin-bottom: 1rem;
         }
@@ -265,68 +241,75 @@
         }
 
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 3rem;
             margin-top: 4rem;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
         }
 
         .stat-card {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            transition: all 0.3s ease;
+            text-align: left;
+            padding: 0 3rem;
+            position: relative;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--gold);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        .stat-card:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 60px;
+            background: rgba(212, 175, 55, 0.3);
         }
 
         .stat-number {
-            font-size: 3rem;
-            font-weight: 800;
+            font-size: 3.5rem;
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
             background: linear-gradient(135deg, #F0D060, #D4AF37);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            font-family: 'Syne', sans-serif;
+            margin-bottom: 0.5rem;
         }
 
         .stat-label {
             font-family: 'Space Mono', monospace;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-dim);
-            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         /* ==================== ENTER BUTTON (IN HERO) ==================== */
         .enter-btn {
-            padding: 1.5rem 4rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            font-family: 'Syne', sans-serif;
-            background: transparent;
-            color: var(--gold);
-            border: 3px solid var(--gold);
-            border-radius: 12px;
+            padding: 1.8rem 5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            font-family: 'Cinzel', serif;
+            background: var(--gold);
+            color: #0a0a0f;
+            border: none;
+            border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            box-shadow: 0 0 20px var(--gold-glow);
+            letter-spacing: 0.1em;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
             position: relative;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
 
         .enter-btn:hover:not(:disabled) {
-            background: var(--gold);
-            color: #0a0a0f;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            background: var(--gold-light);
+            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5);
             transform: translateY(-3px);
         }
 
@@ -361,42 +344,19 @@
             box-shadow: 0 0 10px var(--gold-glow);
         }
 
-        .enter-hint {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            margin-top: 1rem;
-        }
 
         .ca-address {
             font-family: 'Space Mono', monospace;
-            font-size: 14px;
+            font-size: 16px;
             color: var(--gold);
-            cursor: pointer;
-            padding: 10px 20px;
+            padding: 12px 30px;
             border: 1px solid rgba(212, 175, 55, 0.3);
             border-radius: 8px;
             background: rgba(212, 175, 55, 0.05);
-            transition: all 0.3s ease;
-            user-select: all;
-            word-break: break-all;
-            max-width: 500px;
-            margin: 20px auto 5px;
+            max-width: 200px;
+            margin: 20px auto;
             text-align: center;
             display: block;
-        }
-
-        .ca-address:hover {
-            background: rgba(212, 175, 55, 0.1);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-        }
-
-        .ca-hint {
-            font-family: 'Space Mono', monospace;
-            font-size: 11px;
-            color: var(--text-dim);
-            text-align: center;
-            margin-top: 5px;
         }
 
         /* ==================== REVEAL ANIMATION ==================== */
@@ -626,11 +586,29 @@
             }
 
             .stats-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2rem;
             }
 
-            .enter-hint {
-                font-size: 0.8rem;
+            .stat-card {
+                padding: 0;
+            }
+
+            .stat-card:not(:last-child)::after {
+                display: none;
+            }
+
+            .about-content {
+                text-align: center;
+            }
+
+            .section-title {
+                text-align: center;
+            }
+
+            .social-buttons {
+                justify-content: center;
             }
         }
     </style>
@@ -664,13 +642,7 @@
                 <div class="loading-bar-mini">
                     <div class="loading-bar-fill" id="loadingFill"></div>
                 </div>
-                <p class="enter-hint">Best experienced on desktop • Use WASD to move</p>
-                <div class="ca-address" id="caAddress">CA: EDPUEB7HHVsjnV9pH3rSSphQeYndYK1Yy2NSJWY6pump 📋</div>
-                <p class="ca-hint">Click to copy</p>
-            </div>
-            <div class="scroll-indicator">
-                <span>SCROLL</span>
-                <div class="chevron"></div>
+                <div class="ca-address">CA: SOON</div>
             </div>
         </section>
 
@@ -987,14 +959,6 @@
                 // Mute button
                 document.getElementById('muteBtn').addEventListener('click', () => {
                     this.toggleMute();
-                });
-
-                // CA address copy
-                document.getElementById('caAddress').addEventListener('click', function() {
-                    navigator.clipboard.writeText('EDPUEB7HHVsjnV9pH3rSSphQeYndYK1Yy2NSJWY6pump');
-                    const original = this.textContent;
-                    this.textContent = '✅ Copied!';
-                    setTimeout(() => { this.textContent = original; }, 2000);
                 });
 
                 // Window resize
