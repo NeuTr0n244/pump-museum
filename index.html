@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GALLERY OF MEMES - The History of Internet Culture</title>
+    <title>Meme Museum</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -413,7 +413,7 @@
             100% { opacity: 0; }
         }
 
-        /* ==================== GALLERY OF MEMES 3D ==================== */
+        /* ==================== MEME MUSEUM 3D ==================== */
         #gameCanvas {
             position: fixed;
             top: 0;
@@ -627,7 +627,7 @@
     <!-- Navbar -->
     <nav class="navbar" id="navbar">
         <div class="navbar-logo">
-            <span class="navbar-title">GALLERY OF MEMES</span>
+            <span class="navbar-title">MEME MUSEUM</span>
         </div>
         <div class="navbar-links">
             <a href="#about">About</a>
@@ -640,7 +640,7 @@
         <section id="hero">
             <div class="particles-bg" id="particlesBg"></div>
             <div class="hero-content">
-                <h1 class="hero-title">GALLERY OF MEMES</h1>
+                <h1 class="hero-title">MEME MUSEUM</h1>
                 <p class="hero-subtitle">The History of Internet Culture</p>
                 <button id="enterBtn" class="enter-btn" disabled>LOADING...</button>
                 <div class="loading-bar-mini">
@@ -653,20 +653,20 @@
         <!-- SECTION 2 - ABOUT -->
         <section id="about">
             <div class="about-content reveal">
-                <h2 class="section-title">What is Gallery of Memes?</h2>
+                <h2 class="section-title">What is Meme Museum?</h2>
                 <p class="about-text">
-                    Step into the world's first 3D Gallery of Memes dedicated to internet meme culture.
+                    Step into the world's first 3D Meme Museum dedicated to internet meme culture.
                     Walk through our halls and discover the origins of the most iconic memes
                     that shaped online culture — from Doge to Pepe, from Trollface to Wojak.
                 </p>
                 <p class="about-text">
                     Built on the spirit of pump.fun and the crypto meme community,
-                    Gallery of Memes celebrates the art, humor, and creativity that connects
+                    Meme Museum celebrates the art, humor, and creativity that connects
                     millions of people worldwide.
                 </p>
 
                 <div class="social-buttons">
-                    <a href="https://x.com/GlryMemes" target="_blank" rel="noopener noreferrer" class="social-btn">
+                    <a href="https://x.com/memeglry" target="_blank" rel="noopener noreferrer" class="social-btn">
                         <span class="social-icon">𝕏</span>
                         <span>Follow us on X</span>
                     </a>
@@ -693,7 +693,7 @@
     <!-- Gold flash overlay -->
     <div id="greenFlash"></div>
 
-    <!-- Gallery of Memes 3D -->
+    <!-- Meme Museum 3D -->
     <canvas id="gameCanvas"></canvas>
 
     <!-- Pause Screen -->
@@ -796,7 +796,7 @@
 
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // ==================== GALLERY OF MEMES ENGINE ====================
+        // ==================== MEME MUSEUM ENGINE ====================
 
         class MuseumEngine {
             constructor() {
@@ -1107,10 +1107,10 @@
                 this.modelLoaded = true;
                 this.loadingFill.style.width = '100%';
                 this.enterBtn.disabled = false;
-                this.enterBtn.textContent = 'ENTER GALLERY OF MEMES';
+                this.enterBtn.textContent = 'ENTER MEME MUSEUM';
                 this.enterBtn.classList.add('loaded');
 
-                console.log('Ready! Click ENTER GALLERY OF MEMES.');
+                console.log('Ready! Click ENTER MEME MUSEUM.');
             }
 
             startTransition() {
@@ -1120,7 +1120,7 @@
                 // Gold flash
                 this.greenFlash.classList.add('active');
 
-                // After flash, show gallery of memes
+                // After flash, show meme museum
                 setTimeout(() => {
                     // Hide landing page
                     this.landingPage.classList.add('hidden');
