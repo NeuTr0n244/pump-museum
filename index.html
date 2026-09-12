@@ -738,6 +738,7 @@
         import * as THREE from 'three';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
         import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+        import { loadMuseumBuffer } from './museum-parts.mjs';
 
         // ==================== LANDING PAGE ANIMATIONS ====================
 
@@ -971,7 +972,7 @@
                 });
             }
 
-            loadModel() {
+            async loadModel() {
                 // Setup loaders
                 const dracoLoader = new DRACOLoader();
                 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
@@ -979,25 +980,18 @@
                 const gltfLoader = new GLTFLoader();
                 gltfLoader.setDRACOLoader(dracoLoader);
 
-                // Load GLB file
-                gltfLoader.load(
-                    'https://pub-8d7b1a002dc7461881f41950b1c60105.r2.dev/museu%20memes1.glb',
-                    (gltf) => {
-                        this.onModelLoaded(gltf);
-                    },
-                    (progress) => {
-                        if (progress.lengthComputable) {
-                            const percent = Math.round((progress.loaded / progress.total) * 100);
-                            this.loadingFill.style.width = `${percent}%`;
-                            console.log(`Loading: ${percent}%`);
-                        }
-                    },
-                    (error) => {
-                        console.error('Error loading model:', error);
-                        this.enterBtn.textContent = 'ERROR - CHECK CONSOLE';
-                        alert('Error: File "museu memes1.glb" not found. Make sure it is in the same folder as index.html');
-                    }
-                );
+                try {
+                    const buffer = await loadMuseumBuffer((progress) => {
+                        this.loadingFill.style.width = `${Math.min(99, Math.round(progress * 100))}%`;
+                    });
+                    const gltf = await gltfLoader.parseAsync(buffer, '');
+                    this.onModelLoaded(gltf);
+                } catch (error) {
+                    console.error('Error loading model:', error);
+                    this.enterBtn.textContent = 'DOWNLOAD FAILED — RELOAD TO RETRY';
+                } finally {
+                    dracoLoader.dispose();
+                }
             }
 
             setupLighting(hasModelLights) {
