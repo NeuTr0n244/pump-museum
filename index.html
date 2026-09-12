@@ -349,19 +349,22 @@
             font-family: 'Space Mono', monospace;
             font-size: 14px;
             color: var(--gold);
-            cursor: default;
+            cursor: pointer;
             padding: 12px 24px;
             border: 1px solid rgba(212, 175, 55, 0.3);
             border-radius: 8px;
             background: rgba(212, 175, 55, 0.05);
             transition: all 0.3s ease;
-            user-select: none;
+            user-select: text;
             word-break: break-all;
-            max-width: 500px;
+            max-width: min(500px, 100%);
             margin: 20px auto;
             text-align: center;
             display: block;
         }
+
+        .ca-address:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+        .ca-feedback { display: block; margin-top: 6px; font-size: 11px; }
 
         /* ==================== REVEAL ANIMATION ==================== */
         .reveal {
@@ -646,7 +649,10 @@
                 <div class="loading-bar-mini">
                     <div class="loading-bar-fill" id="loadingFill"></div>
                 </div>
-                <div class="ca-address" id="caAddress">CA SOON</div>
+                <button type="button" class="ca-address" id="caAddress" aria-label="Copy contract address">
+                    CA: <span id="contractValue">0xcca6fa7fdbe1d41537b1eaf2bf99a6dada71a4ed</span>
+                    <span class="ca-feedback" id="caFeedback" aria-live="polite">Click to copy</span>
+                </button>
             </div>
         </section>
 
@@ -724,6 +730,28 @@
             <span id="triCount">0</span>
         </div>
     </div>
+
+    <script>
+        const caButton = document.getElementById('caAddress');
+        const caFeedback = document.getElementById('caFeedback');
+        let caFeedbackTimer;
+        caButton.addEventListener('click', async () => {
+            clearTimeout(caFeedbackTimer);
+            const value = document.getElementById('contractValue');
+            try {
+                await navigator.clipboard.writeText(value.textContent.trim());
+                caFeedback.textContent = 'Copied!';
+            } catch {
+                const range = document.createRange();
+                range.selectNodeContents(value);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                caFeedback.textContent = 'Select and copy the address';
+            }
+            caFeedbackTimer = setTimeout(() => { caFeedback.textContent = 'Click to copy'; }, 2500);
+        });
+    </script>
 
     <script type="importmap">
     {
@@ -962,8 +990,6 @@
                 document.getElementById('muteBtn').addEventListener('click', () => {
                     this.toggleMute();
                 });
-
-                // Contract address will be added after the Robinhood Chain launch.
 
                 // Window resize
                 window.addEventListener('resize', () => {
